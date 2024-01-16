@@ -1,0 +1,706 @@
+<!doctype html>
+<html lang="es">
+<head>
+<link rel="stylesheet" type="text/css" href="base.css" />
+<link rel="stylesheet" type="text/css" href="exe_effects.css" />
+<link rel="stylesheet" type="text/css" href="content.css" />
+<link rel="stylesheet" type="text/css" href="nav.css" />
+<meta http-equiv="content-type" content="text/html;  charset=utf-8" />
+<title>4.3. Representación de vistas | Conservando nuestra historia </title>
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+<meta name="author" content="Tecnología" />
+<link rel="license" type="text/html" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" />
+<meta name="generator" content="eXeLearning 2.8.1 - exelearning.net" />
+<!--[if lt IE 9]><script type="text/javascript" src="exe_html5.js"></script><![endif]-->
+<script type="text/javascript" src="exe_jquery.js"></script>
+<script type="text/javascript" src="exe_effects.js"></script>
+<script type="text/javascript" src="common_i18n.js"></script>
+<script type="text/javascript" src="common.js"></script>
+<link rel="stylesheet" type="text/css" href="udl-content.css" />
+<script type="text/javascript" src="udl-content.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet"  type="text/css">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible&display=swap" rel="stylesheet" type="text/css">
+<link href="https://fonts.cdnfonts.com/css/opendyslexic" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet" type="text/css">
+<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet"  type="text/css">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet"  type="text/css">
+
+
+<style>
+  
+  .z-index {
+    z-index: 999;
+  }
+
+  .select-container {
+    display: inline-block;
+    position: relative;
+    z-index: 999;
+  }
+
+  .font-button {
+    padding: 8px 16px;
+    border: 1px solid black;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin: 8px;
+    text-align: center;
+    text-decoration: none;
+    background-color: white;
+    color: black;
+    z-index: 999;
+  }
+
+  .fontButtonContainer {
+     z-index: 999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap; /* establece el wrap para que los botones se distribuyan en varias líneas */
+    gap: 5px; /* ajusta el espacio entre los botones */
+    position: static; /* fija la barra de botones en la página: static para que aparezca en la parte superior, fixed para que quede flotando */
+    top: 40px; /* fija la barra de botones en la parte superior de la página */
+    left: 0; /* fija la barra de botones en el margen izquierdo */
+    right: 0; /* fija la barra de botones en el margen derecho */
+    margin: auto; /* centra la barra de botones horizontalmente */
+  }
+    
+  /* Estilo para el desplegable */
+  select {
+    padding: 8px 4px;
+    border: 1px solid black;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin: 6px;
+    text-align: center;
+    text-decoration: none;
+    background-color: white;
+  }
+  
+  select option {
+  text-align: left;
+  }
+  
+</style>
+
+<script>
+
+// BatexeGo v3 Juan José de Haro 
+
+// Define los textos que se ven en pantalla. Reemplazar el texto entre comillas
+
+  // Textos del menú desplegable
+    const defaultText = 'Parámetros por defecto:'; //Descripción de la opción por defecto
+    const standardText = 'Fuente estándar'; // Fuente original del documento
+    
+    const dyslexicDesc = 'Dislexia:'; // Descripción de la opción OpenDyslexic  
+    const dyslexicText = 'OpenDyslexic'; 
+    
+    const hyperlegibleDesc = 'Deficiencias visuales:'; // Descripción de la opción Atkinson Hyperlegible
+    const hyperlegibleText = 'Atkinson Hyperlegible'; 
+    
+    const highLegibilityDesc = 'Alta legibilidad:'; // Descripción de las opciones de alta legibilidad
+    const opensansText = 'OpenSans'; 
+    const robotoText = 'Roboto'; 
+    const latoText = 'Lato'; 
+    const montserratText = 'Montserrat'; 
+
+  // Botones aumentar y disminuir fuente
+    const increaseFontText = 'A+'; // Botón para incrementar la fuente
+    const increaseFontTitle = 'Incrementa la fuente'; // Texto emergente al pasar el ratón
+    
+    const decreaseFontText = 'A-'; // Botón para reducir la fuente
+    const decreaseFontTitle = 'Reduce la fuente'; // Texto emergente al pasar el ratón
+
+  // Botón para traducir
+    const translateText = '🌐'; // Texto para el botón de traducción de Google
+    const translateTitle = 'Traduce la página'; // Texto emergente al pasar el ratón
+
+  // Botón para leer / detener la lectura en voz alta
+    let readText = 'Leer'; // Botón para leer en voz alta el contenido de la página
+    const readTextTitle ='Lee en voz alta la selección o la página entera'; // Texto emergente al pasar el ratón
+    
+    const stopText = 'Detener'; // Texto del botón para detener la lectura
+    const stopTextTitle = 'Detiene la lectura'; // Texto emergente al pasar el ratón
+  
+  // Botones para que los botones estén siempre visibles
+    let floatingFix = 'Fijar'; // Texto del botón flotante cuando está sobre el texto
+    let floatingFixTitle = 'Fija la barra de botones en la parte superior'; // Texto emergente al pasar el ratón
+    
+    let floatingFloat = 'Flotar'; //Texto del botón flotante cuando está fijo en la parte superior
+    let floatingFloatTitle = 'La barra permanecerá siempre visible';
+  
+  
+  // Enlace +Info
+    const infoText = '+Info'; // Texto del enlace +Info
+    const infoTextLink = 'https://batexego.bilateria.org'; // Destino del enlace de +Info
+
+// Fin 
+  
+
+  readText = `${readText} (${document.documentElement.lang})`; //Se añade el idioma al botón Leer
+  
+
+  let originalFont;
+  let currentFontSize;
+  let originalFontSize;
+  let isReading = false;
+  let utterance = new SpeechSynthesisUtterance();
+  let googleTranslateWidgetVisible = localStorage.getItem('googleTranslateWidgetVisible');
+
+  function setFont(font) {
+  document.body.style.fontFamily = font;
+  localStorage.setItem('font', font);
+  }
+
+  function setFontSize(size) {
+  currentFontSize = parseInt(window.getComputedStyle(document.body).getPropertyValue('font-size'));
+  currentFontSize += size;
+  document.body.style.fontSize = currentFontSize + 'px';
+  localStorage.setItem('fontSize', currentFontSize + 'px');
+  }
+  
+  
+
+function toggleGoogleTranslateWidget() {
+  if (!googleTranslateWidgetVisible) {
+    const script = document.createElement('script');
+    script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+    script.id = 'google-translate-script';
+    document.head.appendChild(script);
+    
+    const googleTranslateElement = document.createElement('div');
+    googleTranslateElement.id = 'google_translate_element';
+    googleTranslateElement.style.position = 'fixed';
+    googleTranslateElement.style.top = '0';
+    googleTranslateElement.style.right = '0';
+    googleTranslateElement.style.zIndex = '1000';
+    document.body.appendChild(googleTranslateElement);
+
+    window.googleTranslateElementInit = function() {
+      new google.translate.TranslateElement({pageLanguage: 'auto', layout: google.translate.TranslateElement.FloatPosition.TOP_RIGHT}, 'google_translate_element');
+    };
+
+    googleTranslateWidgetVisible = true;
+    
+  } else {
+    const script = document.getElementById('google-translate-script');
+    script.remove();
+    
+    const googleTranslateElement = document.getElementById('google_translate_element');
+    googleTranslateElement.remove();
+
+    googleTranslateWidgetVisible = false;
+  }
+  localStorage.setItem('googleTranslateWidgetVisible',googleTranslateWidgetVisible);
+}
+
+
+
+
+  document.addEventListener('DOMContentLoaded', () => {
+
+    googleTranslateWidgetVisible = JSON.parse(localStorage.getItem('googleTranslateWidgetVisible'));
+  if(googleTranslateWidgetVisible) {
+    googleTranslateWidgetVisible = false;
+    toggleGoogleTranslateWidget();
+  }
+
+    
+  
+    originalFont = window.getComputedStyle(document.body).getPropertyValue('font-family');
+    localStorage.setItem('originalFont', originalFont);
+    let font = localStorage.getItem('font');
+    if (!font) {
+    font = originalFont;
+    }
+    document.body.style.fontFamily = font;
+
+    let fontSize = localStorage.getItem('fontSize');
+    originalFontSize = window.getComputedStyle(document.body).getPropertyValue('font-size');
+    localStorage.setItem('originalFontSize', originalFontSize);
+    if (!fontSize) {
+    fontSize = originalFontSize
+    localStorage.setItem('fontSize', fontSize);
+    }
+    document.body.style.fontSize = fontSize;
+
+    const fontButtonContainer = document.createElement('div');
+    fontButtonContainer.classList.add('fontButtonContainer'); 
+    
+    const selectContainer = document.createElement('div');
+    selectContainer.classList.add('select-container');
+    const select = document.createElement('select');
+    select.classList.add('z-index');
+    const standardOption = document.createElement('option');
+    standardOption.value = 'standard';
+    standardOption.text = standardText;
+
+    const defaultFontOptGroup = document.createElement('optgroup');
+    defaultFontOptGroup.label = defaultText;
+    defaultFontOptGroup.appendChild(standardOption);
+
+    select.appendChild(defaultFontOptGroup);
+
+
+    const dyslexicOption = document.createElement('option');
+    dyslexicOption.value = 'dyslexic';
+    dyslexicOption.text = dyslexicText;
+    select.add(dyslexicOption);
+
+    const dyslexicOptGroup = document.createElement('optgroup');
+    dyslexicOptGroup.label = dyslexicDesc;
+    dyslexicOptGroup.appendChild(dyslexicOption);
+    select.appendChild(dyslexicOptGroup);
+
+    const hyperlegibleOption = document.createElement('option');
+    hyperlegibleOption.value = 'hyperlegible';
+    hyperlegibleOption.text = hyperlegibleText;
+    select.add(hyperlegibleOption);
+
+    const hyperlegibleOptGroup = document.createElement('optgroup');
+    hyperlegibleOptGroup.label = hyperlegibleDesc;
+    hyperlegibleOptGroup.appendChild(hyperlegibleOption);
+    select.appendChild(hyperlegibleOptGroup);
+
+    const opensansOption = document.createElement('option');
+    opensansOption.value = 'Open Sans';
+    opensansOption.text = opensansText;
+    select.add(opensansOption);
+
+    const robotoOption = document.createElement('option');
+    robotoOption.value = 'Roboto';
+    robotoOption.text = robotoText;
+    select.add(robotoOption);
+
+    const latoOption = document.createElement('option');
+    latoOption.value = 'Lato';
+    latoOption.text = latoText;
+    select.add(latoOption);
+
+    const montserratOption = document.createElement('option');
+    montserratOption.value = 'Montserrat';
+    montserratOption.text = montserratText;
+    select.add(montserratOption);  
+    
+
+    const highLegibilityOptGroup = document.createElement('optgroup');
+    highLegibilityOptGroup.label = highLegibilityDesc;
+    highLegibilityOptGroup.appendChild(latoOption);
+    highLegibilityOptGroup.appendChild(montserratOption);
+    highLegibilityOptGroup.appendChild(opensansOption);
+    highLegibilityOptGroup.appendChild(robotoOption);
+    
+    
+    
+    select.appendChild(highLegibilityOptGroup);
+
+    // Seleccionar la opción correspondiente al cargar la página
+    if (font === originalFont) { // Nueva condición
+    select.selectedIndex = 0; // Nueva línea
+    } else if (font === 'OpenDyslexic') {
+    select.selectedIndex = 1;
+    } else if (font === 'Atkinson Hyperlegible') {
+    select.selectedIndex = 2;
+    } else if (font === 'Roboto') {
+    select.selectedIndex = 6;
+    } else if (font === 'Lato') {
+    select.selectedIndex = 3;
+    } else if (font === 'Open Sans') {
+    select.selectedIndex = 5;
+    } else if (font === 'Montserrat') {
+    select.selectedIndex = 4;
+    }
+
+    select.addEventListener('change', () => {
+    const font = select.value;
+    if (font === 'standard') {
+    setFont(originalFont);
+    fontSize = originalFontSize;
+    localStorage.setItem('fontSize', fontSize);
+    document.body.style.fontSize = localStorage.getItem('originalFontSize');
+    } else if (font === 'dyslexic') {
+    setFont('OpenDyslexic');
+    } else if (font === 'hyperlegible') {
+    setFont('Atkinson Hyperlegible');
+    } else if (font === 'Open Sans') {
+    setFont('Open Sans');
+    } else if (font === 'Roboto') {
+    setFont('Roboto');
+    } else if (font === 'Lato') {
+    setFont('Lato');
+    }  else if (font === 'Montserrat') {
+    setFont('Montserrat');
+    }
+    });
+
+    selectContainer.appendChild(select);
+    fontButtonContainer.appendChild(selectContainer);
+    
+
+    const increaseFontButton = document.createElement('button');
+    increaseFontButton.classList.add('font-button');
+    increaseFontButton.textContent = increaseFontText;
+    increaseFontButton.setAttribute('title', increaseFontTitle);
+    increaseFontButton.addEventListener('click', () => setFontSize(1));
+    fontButtonContainer.appendChild(increaseFontButton);
+
+    const decreaseFontButton = document.createElement('button');
+    decreaseFontButton.classList.add('font-button');
+    decreaseFontButton.textContent = decreaseFontText;
+    decreaseFontButton.setAttribute('title', decreaseFontTitle);
+    decreaseFontButton.addEventListener('click', () => setFontSize(-1));
+    fontButtonContainer.appendChild(decreaseFontButton);
+    
+    const translateButton = document.createElement('button');
+    translateButton.classList.add('font-button');
+    translateButton.textContent = translateText;
+    translateButton.setAttribute('title', translateTitle);
+    translateButton.addEventListener('click', toggleGoogleTranslateWidget);
+    fontButtonContainer.appendChild(translateButton);
+
+  // Botón para leer en voz alta
+    const readButton = document.createElement('button');
+    readButton.classList.add('font-button');
+    readButton.textContent = readText;
+    readButton.setAttribute('title', readTextTitle);
+    
+    readButton.addEventListener('click', () => {
+    let selectedText = window.getSelection().toString();
+    let text = '';
+    let lang = document.documentElement.lang;
+    if (selectedText !== '') {
+      text = selectedText;
+      let selectedNode = window.getSelection().anchorNode;
+      while (selectedNode && selectedNode.nodeType !== Node.ELEMENT_NODE) {
+        selectedNode = selectedNode.parentNode;
+      }
+      if (selectedNode) {
+        const selectedLang = selectedNode.getAttribute('lang');
+        if (selectedLang) {
+          lang = selectedLang;
+        }
+      }
+    } else {
+      text = document.body.innerText;
+      const bodyLang = document.body.getAttribute('lang');
+      if (bodyLang) {
+        lang = bodyLang;
+      }
+    }
+
+    utterance.lang = lang;
+    utterance.text = text;
+
+    if (!isReading) {
+      isReading = true;
+      readButton.textContent = `${stopText} (${lang})`;
+      readButton.setAttribute('title', stopTextTitle);
+      speechSynthesis.speak(utterance);
+    } else {
+      isReading = false;
+      readButton.textContent = readText;
+      readButton.setAttribute('title', readTextTitle);
+      speechSynthesis.cancel();
+    }
+
+    utterance.addEventListener('end', () => {
+      isReading = false;
+      readButton.textContent = readText;
+      readButton.setAttribute('title', readTextTitle);
+    });
+  });  
+    
+    fontButtonContainer.appendChild(readButton);
+    
+  // Botón para que la barra esté siempre visible
+    const floatingButton = document.createElement('button');
+    floatingButton.classList.add('font-button');
+    floatingButton.textContent = floatingFloat;
+    floatingButton.setAttribute('title', floatingFloatTitle);
+    floatingButton.addEventListener('click', () => {
+    if (floatingButton.textContent === floatingFix) {
+      fontButtonContainer.style.position = 'static';
+      floatingButton.textContent = floatingFloat;
+      floatingButton.setAttribute('title', floatingFloatTitle);
+      localStorage.setItem('floatState', 'static');
+    } else {
+      fontButtonContainer.style.position = 'fixed';
+      floatingButton.textContent = floatingFix;
+      floatingButton.setAttribute('title', floatingFixTitle);
+      localStorage.setItem('floatState', 'fixed');
+    }
+  });
+
+    
+
+    let floatState = localStorage.getItem('floatState');
+    if (!floatState) {
+      floatState = 'static';
+      floatingButton.textContent = floatingFix;
+      floatingButton.setAttribute('title', floatingFixTitle);
+    }
+    if (floatState === 'fixed') {
+      fontButtonContainer.style.position = 'fixed';
+      floatingButton.textContent = floatingFix;
+      floatingButton.setAttribute('title', floatingFixTitle);
+    } else {
+      fontButtonContainer.style.position = 'static';
+      floatingButton.textContent = floatingFloat;
+      floatingButton.setAttribute('title', floatingFloatTitle);
+    }
+    
+    localStorage.setItem('floatState', floatState);
+    
+  fontButtonContainer.appendChild(floatingButton);
+
+
+    const infoLink = document.createElement('a');
+    infoLink.textContent = infoText;
+    infoLink.href = infoTextLink;
+    infoLink.target = '_blank';
+    infoLink.style.marginLeft = '8px';
+    infoLink.style.fontSize = '12px';
+    fontButtonContainer.appendChild(infoLink);
+
+    
+    infoLink.classList.add('z-index');
+
+    document.body.insertBefore(fontButtonContainer, document.body.firstChild);
+   
+  });
+  
+  
+
+</script></head>
+<body class="exe-web-site" id="exe-node-185"><script type="text/javascript">document.body.className+=" js"</script>
+<div id="content">
+<p id="skipNav"><a href="#main" class="sr-av">Saltar la navegación</a></p>
+<header id="header" ><div id="headerContent">Conservando nuestra historia</div></header>
+<nav id="siteNav">
+<ul>
+   <li><a href="index.html" class="daddy main-node">Conservando nuestra historia</a></li>
+   <li><a href="antes_de_empezar.html" class="no-ch">Antes de empezar</a></li>
+   <li><a href="1_construyendo_nuestro_propio_daymun.html" class="no-ch">1. Construyendo nuestro propio daymun</a></li>
+   <li><a href="2_activando_nuestros_conocimientos.html" class="no-ch">2. Activando nuestros conocimientos</a></li>
+   <li><a href="3_explorando_acerca_de_la_representacin_grfica.html" class="no-ch">3. Explorando acerca de la representación gráfica</a></li>
+   <li class="current-page-parent"><a href="4_estructurando_nuestro_conocimiento.html" class="current-page-parent daddy">4. Estructurando nuestro conocimiento</a>
+   <ul>
+      <li><a href="41_el_proceso_tecnolgico.html" class="no-ch">4.1. El proceso tecnológico</a></li>
+      <li><a href="42_las_escalas.html" class="no-ch">4.2. Las escalas</a></li>
+      <li id="active"><a href="43_representacin_de_vistas.html" class="active no-ch">4.3. Representación de vistas</a></li>
+      <li><a href="44_acotacin_y_tipos_de_lneas.html" class="no-ch">4.4. Acotación y tipos de líneas.</a></li>
+      <li><a href="45_boceto_croquis_y_plano.html" class="no-ch">4.5. Boceto, croquis y plano</a></li>
+      <li><a href="46_representacin_de_perspectivas.html" class="daddy">4.6. Representación de perspectivas</a>
+      <ul class="other-section">
+         <li><a href="461_perspectiva_caballera.html" class="no-ch">4.6.1. Perspectiva caballera</a></li>
+         <li><a href="462_perspectiva_isomtrica.html" class="no-ch">4.6.2. Perspectiva isométrica</a></li>
+      </ul>
+      </li>
+      <li><a href="47_representacin_cad_en_tinkercad.html" class="no-ch">4.7. Representación CAD en Tinkercad</a></li>
+   </ul>
+   </li>
+   <li><a href="5_aplicando_lo_aprendido.html" class="no-ch">5. Aplicando lo aprendido</a></li>
+   <li><a href="6_evaluando_lo_aprendido.html" class="no-ch">6. Evaluando lo aprendido</a></li>
+</ul>
+</nav>
+<div id='topPagination'>
+<nav class="pagination noprt">
+<a href="42_las_escalas.html" class="prev"><span><span>&laquo; </span>Anterior</span></a> <span class="sep">| </span><span class="page-counter">Página <strong>9</strong> de <strong>17</strong></span> <span class="sep">| </span><a href="44_acotacin_y_tipos_de_lneas.html" class="next"><span>Siguiente<span> &raquo;</span></span></a>
+</nav>
+</div>
+<div id="main-wrapper">
+<section id="main">
+<header id="nodeDecoration"><h1 id="nodeTitle">4.3. Representación de vistas</h1></header>
+<article class="iDevice_wrapper UDLcontentIdevice em_iDevice em_iDevice_udl_rep_lee" id="id1182">
+<div class="iDevice emphasis1" >
+<header class="iDevice_header" style="background-image:url(icon_udl_rep_lee.svg)"><h1 class="iDeviceTitle">1. Introducción</h1></header>
+<div class="iDevice_inner">
+<div class="iDevice_content_wrapper">
+<div id="ta1182_469_2" class="block iDevice_content">
+<div class="exe-udlContent exe-udlContent-representation"><section class="exe-udlContent-block"><div class="exe-udlContent-content"><div class="exe-udlContent-content-main"><p style="text-align: justify;"><span style="font-weight: 400;"><img src="gif_animado_narrador_juvenil.gif" alt="Rétor dice ..." style="float: left; margin-right: 10px; margin-left: 10px;" width="125" height="125">Los objetos que nos rodean existen en tres dimensiones, lo que significa que tienen volumen. Cuando intentamos representar estos objetos en un plano bidimensional, como una lámina de dibujo, surge un desafío. Para superar esta dificultad, recurrimos a la perspectiva en el dibujo, que nos permite dar la ilusión de profundidad y volumen.<br></span></p></div></div></section></div>
+</div>
+</div>
+</div>
+</div>
+</article>
+<article class="iDevice_wrapper UDLcontentIdevice em_iDevice em_iDevice_udl_exp_lee" id="id1183">
+<div class="iDevice emphasis1" >
+<header class="iDevice_header" style="background-image:url(icon_udl_exp_lee.svg)"><h1 class="iDeviceTitle">2. Descubriendo</h1></header>
+<div class="iDevice_inner">
+<div class="iDevice_content_wrapper">
+<div id="ta1183_470_2" class="block iDevice_content">
+<div class="exe-udlContent exe-udlContent-expression"><section class="exe-udlContent-block"><div class="exe-udlContent-content"><div class="exe-udlContent-content-main"><p>En el contexto del dibujo en perspectiva, es fundamental comprender que los objetos tridimensionales deben ser representados en una superficie plana, que posee únicamente dos dimensiones. En muchas ocasiones, los objetos que deseamos dibujar son muy complejos y necesitamos mostrar múltiples vistas o detalles para proporcionar una representación precisa. Para lograr esto, empleamos las denominadas "vistas" de los objetos.</p>
+<p>Las vistas de un objeto son representaciones en dos dimensiones de cada una de las caras o perspectivas del objeto tridimensional. Ya que los objetos pueden observarse desde múltiples ángulos, como desde arriba, desde abajo, desde el frente, desde atrás, desde el lado izquierdo y desde el lado derecho, podemos afirmar que tienen un total de seis vistas posibles.</p>
+<p>Las vistas principales de un objeto son las siguientes:</p>
+<ol style="list-style-type: lower-alpha;">
+<li><strong>Alzado</strong>: El alzado es la vista frontal o principal de la pieza. A menudo se identifica mediante una flecha que la señala como la vista predominante.</li>
+<li><strong>Planta</strong>: La planta es la vista superior de la figura y se coloca debajo del alzado. Muestra cómo se ve el objeto desde arriba.</li>
+<li><strong>Perfil</strong>: El perfil es la vista lateral de la pieza. Esta vista se puede dividir en dos: el perfil izquierdo, que se ubica a la derecha del alzado, y el perfil derecho, que se sitúa a la izquierda del alzado. Estas vistas laterales nos ofrecen diferentes perspectivas de los objetos desde los lados.</li>
+</ol>
+<p>En resumen, las vistas de un objeto son esenciales para representar objetos tridimensionales de manera precisa en un plano bidimensional, como un dibujo. Las vistas principales, como el alzado, la planta y el perfil, nos permiten capturar diferentes aspectos del objeto desde distintos ángulos, lo que facilita su comprensión y representación.</p>
+<p style="text-align: center;"><strong><span style="text-decoration: underline;">OBTENCIÓN DE VISTAS</span></strong></p>
+<p>Para obtener las vistas de la figura y disponerlas correctamente, piensa en ello como si estuvieras desplegando los planos donde has representado cada una de las proyecciones:</p>
+<p><img src="pasos_alzado_perfil_y_planta.png" width="688" height="767" style="display: block; margin-left: auto; margin-right: auto;"></p>
+<p><br>&nbsp;<br>&nbsp;</p>
+<p>De un objeto, podemos obtener un total de seis vistas (piensa en las seis caras de un dado). Sin embargo, para lograr una definición completa del objeto, no es necesario representar todas las vistas en todo momento. Por lo general, resulta suficiente con representar tres de ellas, conocidas como las vistas principales. Como hemos explorado previamente, estas vistas principales son el alzado, la planta y uno de los dos perfiles.</p>
+<p>La disposición de las vistas es crucial, ya que sigue un estándar normativo. Por lo tanto, es importante siempre colocarlas en el siguiente orden:</p>
+<p><img src="img1.png" width="449" height="190" style="display: block; margin-left: auto; margin-right: auto;"></p></div><article class="exe-udlContent-content-simplified js-hidden"><header class='exe-udlContent-alt-content-title'><h2>Lectura facilitada</h2></header><p>En el contexto del dibujo en perspectiva, es fundamental comprender que los objetos tridimensionales deben ser representados en una superficie plana, que posee únicamente dos dimensiones.</p>
+<p>En muchas ocasiones, los objetos que deseamos dibujar son muy complejos y necesitamos mostrar múltiples vistas o detalles para proporcionar una representación precisa.</p>
+<p>Para lograr esto, empleamos las denominadas "vistas" de los objetos.</p>
+<p>Las vistas de un objeto son representaciones en dos dimensiones de cada una de las caras o perspectivas del objeto tridimensional. Ya que los objetos pueden observarse desde múltiples ángulos, como desde arriba, desde abajo, desde el frente, desde atrás, desde el lado izquierdo y desde el lado derecho, podemos afirmar que tienen un total de seis vistas posibles.</p>
+<p>Las vistas principales de un objeto son las siguientes:</p>
+<ul>
+<li>Alzado: El alzado es la vista frontal o principal de la pieza. A menudo se identifica mediante una flecha que la señala como la vista predominante.</li>
+<li>Planta: La planta es la vista superior de la figura y se coloca debajo del alzado. Muestra cómo se ve el objeto desde arriba.</li>
+<li>Perfil: El perfil es la vista lateral de la pieza. Esta vista se puede dividir en dos: el perfil izquierdo, que se ubica a la derecha del alzado, y el perfil derecho, que se sitúa a la izquierda del alzado.</li>
+</ul>
+<p>Estas vistas laterales nos ofrecen diferentes perspectivas de los objetos desde los lados.</p>
+<p>En resumen, las vistas de un objeto son esenciales para representar objetos tridimensionales de manera precisa en un plano bidimensional, como un dibujo. Las vistas principales, como el alzado, la planta y el perfil, nos permiten capturar diferentes aspectos del objeto desde distintos ángulos, lo que facilita su comprensión y representación.</p>
+<p>OBTENCIÓN DE VISTAS</p>
+<p>Para obtener las vistas de la figura y disponerlas correctamente, piensa en ello como si estuvieras desplegando los planos donde has representado cada una de las proyecciones:</p>
+<p>De un objeto, podemos obtener un total de seis vistas (piensa en las seis caras de un dado). Sin embargo, para lograr una definición completa del objeto, no es necesario representar todas las vistas en todo momento.</p>
+<p>Por lo general, resulta suficiente con representar tres de ellas, conocidas como las vistas principales.</p>
+<p>Como hemos explorado previamente, estas vistas principales son el alzado, la planta y uno de los dos perfiles.</p>
+<p>La disposición de las vistas es crucial, ya que sigue un estándar normativo. Por lo tanto, es importante siempre colocarlas en el siguiente orden:</p><button class="exe-udlContent-alt-content-hide">Cerrar</button></article></div></section></div>
+</div>
+</div>
+</div>
+</div>
+</article>
+<article class="iDevice_wrapper UDLcontentIdevice em_iDevice em_iDevice_udl_rep_apoyovisual" id="id1184">
+<div class="iDevice emphasis1" >
+<header class="iDevice_header" style="background-image:url(icon_udl_rep_apoyovisual.svg)"><h1 class="iDeviceTitle">3. En vídeo</h1></header>
+<div class="iDevice_inner">
+<div class="iDevice_content_wrapper">
+<div id="ta1184_813_2" class="block iDevice_content">
+<div class="exe-udlContent exe-udlContent-representation"><section class="exe-udlContent-block"><div class="exe-udlContent-content"><div class="exe-udlContent-content-main"><div class="exe-fx exe-carousel">
+<h2></h2>
+<p style="text-align: center;"><iframe width="560" height="314" src="https://www.youtube.com/embed/9Ql4E4vV7LA"></iframe></p>
+<h2></h2>
+<p style="text-align: center;"><iframe width="560" height="314" src="https://www.youtube.com/embed/7JU-sObizA8"></iframe></p>
+</div></div></div></section></div>
+</div>
+</div>
+</div>
+</div>
+</article>
+<article class="iDevice_wrapper UDLcontentIdevice em_iDevice em_iDevice_udl_rep_caso" id="id1185">
+<div class="iDevice emphasis1" >
+<header class="iDevice_header" style="background-image:url(icon_udl_rep_caso.svg)"><h1 class="iDeviceTitle">4. ¡Vamos con un ejemplo!</h1></header>
+<div class="iDevice_inner">
+<div class="iDevice_content_wrapper">
+<div id="ta1185_110_2" class="block iDevice_content">
+<div class="exe-udlContent exe-udlContent-representation"><section class="exe-udlContent-block"><div class="exe-udlContent-content"><div class="exe-udlContent-content-main"><p style="text-align: justify;"><span style="font-size: 12pt;">Observa cómo se representan las vistas alzado, perfil y planta con estos cuatro ejemplos:</span></p>
+<div class="exe-fx exe-paginated">
+<h2>Ejemplo 1</h2>
+<img src="v1.png" alt="" width="342" height="325" style="display: block; margin-left: auto; margin-right: auto;"><br>
+<h2>Ejemplo 2</h2>
+<img src="v2.png" alt="" width="341" height="327" style="display: block; margin-left: auto; margin-right: auto;"><br>
+<h2>Ejemplo 3</h2>
+<img src="v3.png" alt="" width="341" height="327" style="display: block; margin-left: auto; margin-right: auto;"><br>
+<h2>Ejemplo 4</h2>
+<img src="v4.png" alt="" width="342" height="327" style="display: block; margin-left: auto; margin-right: auto;"></div></div></div></section></div>
+</div>
+</div>
+</div>
+</div>
+</article>
+<article class="iDevice_wrapper UDLcontentIdevice em_iDevice em_iDevice_udl_rep_reflexion" id="id1186">
+<div class="iDevice emphasis1" >
+<header class="iDevice_header" style="background-image:url(icon_udl_rep_reflexion.svg)"><h1 class="iDeviceTitle">4. ¡No te desvíes!</h1></header>
+<div class="iDevice_inner">
+<div class="iDevice_content_wrapper">
+<div id="ta1186_818_2" class="block iDevice_content">
+<div class="exe-udlContent exe-udlContent-representation"><section class="exe-udlContent-block"><div class="exe-udlContent-content"><div class="exe-udlContent-content-main"><p><img src="retor_adultos_sin_bocadillo_1_.png" alt="Rétor dice..." title="Rétor dice..." width="137" height="125" style="float: left; margin-right: 10px; margin-left: 10px;"></p>
+<p>Llega el momento de poner en práctica lo aprendido. Formad grupos de cinco, de manera que unos grupos trabajarán la representación de el alzado, otros el perfil y otros la planta.</p>
+<p>Una vez hayáis aprendido a manejaros con los diferentes tipos de vistas volved a vuestro grupo de origen para:</p>
+<ul>
+<li>Explicar cómo representar las diferentes vistas a vuestros compañeros realizando con ellos los ejercicios que habéis hecho anteriormente.</li>
+<li>Aprender a representar las demás vistas realizando los ejercicios propuestos.</li>
+</ul></div><article class="exe-udlContent-content-simplified js-hidden"><header class='exe-udlContent-alt-content-title'><h2>Lectura facilitada</h2></header><ol>
+<li>Llega el momento de poner en práctica lo aprendido. Formad grupos de cinco, de manera que unos grupos trabajarán la representación de el alzado, otros el perfil y otros la planta.</li>
+<li>Una vez hayáis aprendido a manejaros con los diferentes tipos de vistas volved a vuestro grupo de origen para:</li>
+<li>Explicar cómo representar las diferentes vistas a vuestros compañeros realizando con ellos los ejercicios que habéis hecho anteriormente.</li>
+</ol>
+<p>Aprender a representar las demás vistas realizando los ejercicios propuestos.</p><button class="exe-udlContent-alt-content-hide">Cerrar</button></article></div></section><section class="exe-udlContent-block"><div class="exe-udlContent-content"><div class="exe-udlContent-content-main"><div class="exe-fx exe-tabs">
+<h2>Ejercicio 1</h2>
+<p><img src="refuerzo_vistas1.png" width="288" height="276" style="display: block; margin-left: auto; margin-right: auto;"></p>
+<h2>Ejercicio 2</h2>
+<p><img src="refuerzo_vistas_2.png" width="285" height="278" style="display: block; margin-left: auto; margin-right: auto;"></p>
+<h2>Ejercicio 3</h2>
+<p><img src="refuerzo_vistas_3.png" width="292" height="276" style="display: block; margin-left: auto; margin-right: auto;"></p>
+<h2>Ejercicio 4</h2>
+<p><img src="refuezo_vistas_4.png" width="287" height="277" style="display: block; margin-left: auto; margin-right: auto;"></p>
+<h2>Ejercicio 5</h2>
+<p><img src="img0.png" width="210" height="260" alt="" style="display: block; margin-left: auto; margin-right: auto;"></p>
+<h2>Ejercicio 6</h2>
+<p><img src="img1.1.png" width="204" height="258" alt="" style="display: block; margin-left: auto; margin-right: auto;"></p>
+<h2>Ejercicio 7</h2>
+<p><img src="img2.png" width="201" height="260" alt="" style="display: block; margin-left: auto; margin-right: auto;"></p>
+<h2>Ejercicio 8</h2>
+<p style="text-align: center;"><img src="img0.1.png" width="201" height="256" alt=""></p>
+<h2>Ejercicio 9</h2>
+<p style="text-align: center;"><img src="img1.2.png" width="200" height="250" alt=""></p>
+<h2>Ejercicio 10</h2>
+<p style="text-align: center;"><img src="img2.1.png" width="204" height="254" alt=""></p>
+</div></div></div></section><section class="exe-udlContent-block js-hidden"><header class="exe-udlContent-header exe-udlContent-character-2"><h2>Refuerza</h2></header><div class="exe-udlContent-content"><div class="exe-udlContent-content-main"><p>Refuerza los conocimientos de vistas</p>
+<ul>
+<li><a href="https://drive.google.com/file/d/1cQbwjeWXMIiCR4TmwNDGh66yktlZBKt2/view?usp=drive_link">Ficha refuerzo de vistas</a></li>
+<li><a href="https://drive.google.com/file/d/12Bm3WF-qHqVSsUtTlv1jeazggK4ekLdE/view?usp=drive_link">Ficha refuerzo de vistas</a></li>
+</ul></div></div></section><section class="exe-udlContent-block js-hidden"><header class="exe-udlContent-header exe-udlContent-character-3"><h2>Profundiza</h2></header><div class="exe-udlContent-content"><div class="exe-udlContent-content-main"><p>Profundiza los conocimientos de vistas</p>
+<ul>
+<li><a href="https://drive.google.com/file/d/1TpL-pQY3K99uQ8F0D5UBR9FNLvNHoxS_/view?usp=drive_link">Ficha profundización de vistas</a></li>
+</ul></div></div></section></div>
+</div>
+</div>
+</div>
+</div>
+</article>
+<article class="iDevice_wrapper UDLcontentIdevice" id="id1190">
+<div class="iDevice emphasis0" >
+<div id="ta1190_814_2" class="block iDevice_content">
+<div class="exe-udlContent exe-udlContent-engagement"><section class="exe-udlContent-block js-hidden"><header class="exe-udlContent-header exe-udlContent-character-1"><h2><span class="sr-av">Motus dice </span>¿Qué es lo que más te ha gustado de la interacción con tus compañeros?</h2></header><div class="exe-udlContent-content"><div class="exe-udlContent-content-main"><p style="text-align: justify;"><span style="font-size: 12pt;">¿Te ha llamado la atención alguna pregunta planteada por alguno de ellos? ¿Se lo has dicho? ¡A todos y todas nos gusta saber lo que hacemos bien!</span></p></div></div></section></div>
+</div>
+</div>
+</article>
+<article class="iDevice_wrapper textIdevice em_iDevice em_iDevice_udl_eng_curiosidad" id="id1191">
+<div class="iDevice emphasis1" >
+<header class="iDevice_header" style="background-image:url(icon_udl_eng_curiosidad.svg)"><h1 class="iDeviceTitle">Refuerzo y profundización</h1></header>
+<div class="iDevice_inner">
+<div class="iDevice_content_wrapper">
+<div id="ta1191_813_2" class="block iDevice_content">
+<div class="exe-text"><p>Refuerza los conocimientos de vistas</p>
+<ul>
+<li><a href="https://drive.google.com/file/d/1cQbwjeWXMIiCR4TmwNDGh66yktlZBKt2/view?usp=drive_link">Ficha refuerzo de vistas</a></li>
+<li><a href="https://drive.google.com/file/d/12Bm3WF-qHqVSsUtTlv1jeazggK4ekLdE/view?usp=drive_link">Ficha refuerzo de vistas</a></li>
+</ul>
+<p>Profundiza los conocimientos de vistas</p>
+<ul>
+<li><a href="https://drive.google.com/file/d/1TpL-pQY3K99uQ8F0D5UBR9FNLvNHoxS_/view?usp=drive_link">Ficha profundización de vistas</a></li>
+</ul>
+<p>Descubre más en:</p>
+<ul>
+<li><a href="http://www.edu.xunta.gal/centros/cpiasrevoltas/system/files/diedrico.pdf">Expresión gráfica en Tecnología.</a></li>
+<li><a href="https://www3.gobiernodecanarias.org/medusa/ecoblog/jbetgut/files/2012/12/Vistas.pdf">Vistas de un objeto.</a></li>
+</ul></div>
+</div>
+</div>
+</div>
+</div>
+</article>
+<div id="packageLicense" class="cc cc-by-nc-sa">
+<p><span>Obra publicada con</span> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Licencia Creative Commons Reconocimiento No comercial Compartir igual 4.0</a></p>
+</div>
+</section>
+</div>
+<div id='bottomPagination'>
+<nav class="pagination noprt">
+<a href="42_las_escalas.html" class="prev"><span><span>&laquo; </span>Anterior</span></a> <span class="sep">| </span><span class="page-counter">Página <strong>9</strong> de <strong>17</strong></span> <span class="sep">| </span><a href="44_acotacin_y_tipos_de_lneas.html" class="next"><span>Siguiente<span> &raquo;</span></span></a>
+</nav>
+</div>
+</div>
+<p id="made-with-eXe"><a href="https://exelearning.net/" target="_blank" rel="noopener"><span>Creado con eXeLearning<span> (Ventana nueva)</span></span></a></p><script type="text/javascript" src="_adultos_js.js"></script></body></html>

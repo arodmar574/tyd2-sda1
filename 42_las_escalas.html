@@ -1,0 +1,716 @@
+<!doctype html>
+<html lang="es">
+<head>
+<link rel="stylesheet" type="text/css" href="base.css" />
+<link rel="stylesheet" type="text/css" href="exe_effects.css" />
+<link rel="stylesheet" type="text/css" href="content.css" />
+<link rel="stylesheet" type="text/css" href="nav.css" />
+<meta http-equiv="content-type" content="text/html;  charset=utf-8" />
+<title>4.2. Las escalas | Conservando nuestra historia </title>
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+<meta name="author" content="Tecnología" />
+<link rel="license" type="text/html" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" />
+<meta name="generator" content="eXeLearning 2.8.1 - exelearning.net" />
+<!--[if lt IE 9]><script type="text/javascript" src="exe_html5.js"></script><![endif]-->
+<script type="text/javascript" src="exe_jquery.js"></script>
+<script type="text/javascript" src="exe_effects.js"></script>
+<script type="text/javascript" src="common_i18n.js"></script>
+<script type="text/javascript" src="common.js"></script>
+<link rel="stylesheet" type="text/css" href="udl-content.css" />
+<script type="text/javascript" src="udl-content.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet"  type="text/css">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible&display=swap" rel="stylesheet" type="text/css">
+<link href="https://fonts.cdnfonts.com/css/opendyslexic" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet" type="text/css">
+<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet"  type="text/css">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet"  type="text/css">
+
+
+<style>
+  
+  .z-index {
+    z-index: 999;
+  }
+
+  .select-container {
+    display: inline-block;
+    position: relative;
+    z-index: 999;
+  }
+
+  .font-button {
+    padding: 8px 16px;
+    border: 1px solid black;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin: 8px;
+    text-align: center;
+    text-decoration: none;
+    background-color: white;
+    color: black;
+    z-index: 999;
+  }
+
+  .fontButtonContainer {
+     z-index: 999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap; /* establece el wrap para que los botones se distribuyan en varias líneas */
+    gap: 5px; /* ajusta el espacio entre los botones */
+    position: static; /* fija la barra de botones en la página: static para que aparezca en la parte superior, fixed para que quede flotando */
+    top: 40px; /* fija la barra de botones en la parte superior de la página */
+    left: 0; /* fija la barra de botones en el margen izquierdo */
+    right: 0; /* fija la barra de botones en el margen derecho */
+    margin: auto; /* centra la barra de botones horizontalmente */
+  }
+    
+  /* Estilo para el desplegable */
+  select {
+    padding: 8px 4px;
+    border: 1px solid black;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin: 6px;
+    text-align: center;
+    text-decoration: none;
+    background-color: white;
+  }
+  
+  select option {
+  text-align: left;
+  }
+  
+</style>
+
+<script>
+
+// BatexeGo v3 Juan José de Haro 
+
+// Define los textos que se ven en pantalla. Reemplazar el texto entre comillas
+
+  // Textos del menú desplegable
+    const defaultText = 'Parámetros por defecto:'; //Descripción de la opción por defecto
+    const standardText = 'Fuente estándar'; // Fuente original del documento
+    
+    const dyslexicDesc = 'Dislexia:'; // Descripción de la opción OpenDyslexic  
+    const dyslexicText = 'OpenDyslexic'; 
+    
+    const hyperlegibleDesc = 'Deficiencias visuales:'; // Descripción de la opción Atkinson Hyperlegible
+    const hyperlegibleText = 'Atkinson Hyperlegible'; 
+    
+    const highLegibilityDesc = 'Alta legibilidad:'; // Descripción de las opciones de alta legibilidad
+    const opensansText = 'OpenSans'; 
+    const robotoText = 'Roboto'; 
+    const latoText = 'Lato'; 
+    const montserratText = 'Montserrat'; 
+
+  // Botones aumentar y disminuir fuente
+    const increaseFontText = 'A+'; // Botón para incrementar la fuente
+    const increaseFontTitle = 'Incrementa la fuente'; // Texto emergente al pasar el ratón
+    
+    const decreaseFontText = 'A-'; // Botón para reducir la fuente
+    const decreaseFontTitle = 'Reduce la fuente'; // Texto emergente al pasar el ratón
+
+  // Botón para traducir
+    const translateText = '🌐'; // Texto para el botón de traducción de Google
+    const translateTitle = 'Traduce la página'; // Texto emergente al pasar el ratón
+
+  // Botón para leer / detener la lectura en voz alta
+    let readText = 'Leer'; // Botón para leer en voz alta el contenido de la página
+    const readTextTitle ='Lee en voz alta la selección o la página entera'; // Texto emergente al pasar el ratón
+    
+    const stopText = 'Detener'; // Texto del botón para detener la lectura
+    const stopTextTitle = 'Detiene la lectura'; // Texto emergente al pasar el ratón
+  
+  // Botones para que los botones estén siempre visibles
+    let floatingFix = 'Fijar'; // Texto del botón flotante cuando está sobre el texto
+    let floatingFixTitle = 'Fija la barra de botones en la parte superior'; // Texto emergente al pasar el ratón
+    
+    let floatingFloat = 'Flotar'; //Texto del botón flotante cuando está fijo en la parte superior
+    let floatingFloatTitle = 'La barra permanecerá siempre visible';
+  
+  
+  // Enlace +Info
+    const infoText = '+Info'; // Texto del enlace +Info
+    const infoTextLink = 'https://batexego.bilateria.org'; // Destino del enlace de +Info
+
+// Fin 
+  
+
+  readText = `${readText} (${document.documentElement.lang})`; //Se añade el idioma al botón Leer
+  
+
+  let originalFont;
+  let currentFontSize;
+  let originalFontSize;
+  let isReading = false;
+  let utterance = new SpeechSynthesisUtterance();
+  let googleTranslateWidgetVisible = localStorage.getItem('googleTranslateWidgetVisible');
+
+  function setFont(font) {
+  document.body.style.fontFamily = font;
+  localStorage.setItem('font', font);
+  }
+
+  function setFontSize(size) {
+  currentFontSize = parseInt(window.getComputedStyle(document.body).getPropertyValue('font-size'));
+  currentFontSize += size;
+  document.body.style.fontSize = currentFontSize + 'px';
+  localStorage.setItem('fontSize', currentFontSize + 'px');
+  }
+  
+  
+
+function toggleGoogleTranslateWidget() {
+  if (!googleTranslateWidgetVisible) {
+    const script = document.createElement('script');
+    script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+    script.id = 'google-translate-script';
+    document.head.appendChild(script);
+    
+    const googleTranslateElement = document.createElement('div');
+    googleTranslateElement.id = 'google_translate_element';
+    googleTranslateElement.style.position = 'fixed';
+    googleTranslateElement.style.top = '0';
+    googleTranslateElement.style.right = '0';
+    googleTranslateElement.style.zIndex = '1000';
+    document.body.appendChild(googleTranslateElement);
+
+    window.googleTranslateElementInit = function() {
+      new google.translate.TranslateElement({pageLanguage: 'auto', layout: google.translate.TranslateElement.FloatPosition.TOP_RIGHT}, 'google_translate_element');
+    };
+
+    googleTranslateWidgetVisible = true;
+    
+  } else {
+    const script = document.getElementById('google-translate-script');
+    script.remove();
+    
+    const googleTranslateElement = document.getElementById('google_translate_element');
+    googleTranslateElement.remove();
+
+    googleTranslateWidgetVisible = false;
+  }
+  localStorage.setItem('googleTranslateWidgetVisible',googleTranslateWidgetVisible);
+}
+
+
+
+
+  document.addEventListener('DOMContentLoaded', () => {
+
+    googleTranslateWidgetVisible = JSON.parse(localStorage.getItem('googleTranslateWidgetVisible'));
+  if(googleTranslateWidgetVisible) {
+    googleTranslateWidgetVisible = false;
+    toggleGoogleTranslateWidget();
+  }
+
+    
+  
+    originalFont = window.getComputedStyle(document.body).getPropertyValue('font-family');
+    localStorage.setItem('originalFont', originalFont);
+    let font = localStorage.getItem('font');
+    if (!font) {
+    font = originalFont;
+    }
+    document.body.style.fontFamily = font;
+
+    let fontSize = localStorage.getItem('fontSize');
+    originalFontSize = window.getComputedStyle(document.body).getPropertyValue('font-size');
+    localStorage.setItem('originalFontSize', originalFontSize);
+    if (!fontSize) {
+    fontSize = originalFontSize
+    localStorage.setItem('fontSize', fontSize);
+    }
+    document.body.style.fontSize = fontSize;
+
+    const fontButtonContainer = document.createElement('div');
+    fontButtonContainer.classList.add('fontButtonContainer'); 
+    
+    const selectContainer = document.createElement('div');
+    selectContainer.classList.add('select-container');
+    const select = document.createElement('select');
+    select.classList.add('z-index');
+    const standardOption = document.createElement('option');
+    standardOption.value = 'standard';
+    standardOption.text = standardText;
+
+    const defaultFontOptGroup = document.createElement('optgroup');
+    defaultFontOptGroup.label = defaultText;
+    defaultFontOptGroup.appendChild(standardOption);
+
+    select.appendChild(defaultFontOptGroup);
+
+
+    const dyslexicOption = document.createElement('option');
+    dyslexicOption.value = 'dyslexic';
+    dyslexicOption.text = dyslexicText;
+    select.add(dyslexicOption);
+
+    const dyslexicOptGroup = document.createElement('optgroup');
+    dyslexicOptGroup.label = dyslexicDesc;
+    dyslexicOptGroup.appendChild(dyslexicOption);
+    select.appendChild(dyslexicOptGroup);
+
+    const hyperlegibleOption = document.createElement('option');
+    hyperlegibleOption.value = 'hyperlegible';
+    hyperlegibleOption.text = hyperlegibleText;
+    select.add(hyperlegibleOption);
+
+    const hyperlegibleOptGroup = document.createElement('optgroup');
+    hyperlegibleOptGroup.label = hyperlegibleDesc;
+    hyperlegibleOptGroup.appendChild(hyperlegibleOption);
+    select.appendChild(hyperlegibleOptGroup);
+
+    const opensansOption = document.createElement('option');
+    opensansOption.value = 'Open Sans';
+    opensansOption.text = opensansText;
+    select.add(opensansOption);
+
+    const robotoOption = document.createElement('option');
+    robotoOption.value = 'Roboto';
+    robotoOption.text = robotoText;
+    select.add(robotoOption);
+
+    const latoOption = document.createElement('option');
+    latoOption.value = 'Lato';
+    latoOption.text = latoText;
+    select.add(latoOption);
+
+    const montserratOption = document.createElement('option');
+    montserratOption.value = 'Montserrat';
+    montserratOption.text = montserratText;
+    select.add(montserratOption);  
+    
+
+    const highLegibilityOptGroup = document.createElement('optgroup');
+    highLegibilityOptGroup.label = highLegibilityDesc;
+    highLegibilityOptGroup.appendChild(latoOption);
+    highLegibilityOptGroup.appendChild(montserratOption);
+    highLegibilityOptGroup.appendChild(opensansOption);
+    highLegibilityOptGroup.appendChild(robotoOption);
+    
+    
+    
+    select.appendChild(highLegibilityOptGroup);
+
+    // Seleccionar la opción correspondiente al cargar la página
+    if (font === originalFont) { // Nueva condición
+    select.selectedIndex = 0; // Nueva línea
+    } else if (font === 'OpenDyslexic') {
+    select.selectedIndex = 1;
+    } else if (font === 'Atkinson Hyperlegible') {
+    select.selectedIndex = 2;
+    } else if (font === 'Roboto') {
+    select.selectedIndex = 6;
+    } else if (font === 'Lato') {
+    select.selectedIndex = 3;
+    } else if (font === 'Open Sans') {
+    select.selectedIndex = 5;
+    } else if (font === 'Montserrat') {
+    select.selectedIndex = 4;
+    }
+
+    select.addEventListener('change', () => {
+    const font = select.value;
+    if (font === 'standard') {
+    setFont(originalFont);
+    fontSize = originalFontSize;
+    localStorage.setItem('fontSize', fontSize);
+    document.body.style.fontSize = localStorage.getItem('originalFontSize');
+    } else if (font === 'dyslexic') {
+    setFont('OpenDyslexic');
+    } else if (font === 'hyperlegible') {
+    setFont('Atkinson Hyperlegible');
+    } else if (font === 'Open Sans') {
+    setFont('Open Sans');
+    } else if (font === 'Roboto') {
+    setFont('Roboto');
+    } else if (font === 'Lato') {
+    setFont('Lato');
+    }  else if (font === 'Montserrat') {
+    setFont('Montserrat');
+    }
+    });
+
+    selectContainer.appendChild(select);
+    fontButtonContainer.appendChild(selectContainer);
+    
+
+    const increaseFontButton = document.createElement('button');
+    increaseFontButton.classList.add('font-button');
+    increaseFontButton.textContent = increaseFontText;
+    increaseFontButton.setAttribute('title', increaseFontTitle);
+    increaseFontButton.addEventListener('click', () => setFontSize(1));
+    fontButtonContainer.appendChild(increaseFontButton);
+
+    const decreaseFontButton = document.createElement('button');
+    decreaseFontButton.classList.add('font-button');
+    decreaseFontButton.textContent = decreaseFontText;
+    decreaseFontButton.setAttribute('title', decreaseFontTitle);
+    decreaseFontButton.addEventListener('click', () => setFontSize(-1));
+    fontButtonContainer.appendChild(decreaseFontButton);
+    
+    const translateButton = document.createElement('button');
+    translateButton.classList.add('font-button');
+    translateButton.textContent = translateText;
+    translateButton.setAttribute('title', translateTitle);
+    translateButton.addEventListener('click', toggleGoogleTranslateWidget);
+    fontButtonContainer.appendChild(translateButton);
+
+  // Botón para leer en voz alta
+    const readButton = document.createElement('button');
+    readButton.classList.add('font-button');
+    readButton.textContent = readText;
+    readButton.setAttribute('title', readTextTitle);
+    
+    readButton.addEventListener('click', () => {
+    let selectedText = window.getSelection().toString();
+    let text = '';
+    let lang = document.documentElement.lang;
+    if (selectedText !== '') {
+      text = selectedText;
+      let selectedNode = window.getSelection().anchorNode;
+      while (selectedNode && selectedNode.nodeType !== Node.ELEMENT_NODE) {
+        selectedNode = selectedNode.parentNode;
+      }
+      if (selectedNode) {
+        const selectedLang = selectedNode.getAttribute('lang');
+        if (selectedLang) {
+          lang = selectedLang;
+        }
+      }
+    } else {
+      text = document.body.innerText;
+      const bodyLang = document.body.getAttribute('lang');
+      if (bodyLang) {
+        lang = bodyLang;
+      }
+    }
+
+    utterance.lang = lang;
+    utterance.text = text;
+
+    if (!isReading) {
+      isReading = true;
+      readButton.textContent = `${stopText} (${lang})`;
+      readButton.setAttribute('title', stopTextTitle);
+      speechSynthesis.speak(utterance);
+    } else {
+      isReading = false;
+      readButton.textContent = readText;
+      readButton.setAttribute('title', readTextTitle);
+      speechSynthesis.cancel();
+    }
+
+    utterance.addEventListener('end', () => {
+      isReading = false;
+      readButton.textContent = readText;
+      readButton.setAttribute('title', readTextTitle);
+    });
+  });  
+    
+    fontButtonContainer.appendChild(readButton);
+    
+  // Botón para que la barra esté siempre visible
+    const floatingButton = document.createElement('button');
+    floatingButton.classList.add('font-button');
+    floatingButton.textContent = floatingFloat;
+    floatingButton.setAttribute('title', floatingFloatTitle);
+    floatingButton.addEventListener('click', () => {
+    if (floatingButton.textContent === floatingFix) {
+      fontButtonContainer.style.position = 'static';
+      floatingButton.textContent = floatingFloat;
+      floatingButton.setAttribute('title', floatingFloatTitle);
+      localStorage.setItem('floatState', 'static');
+    } else {
+      fontButtonContainer.style.position = 'fixed';
+      floatingButton.textContent = floatingFix;
+      floatingButton.setAttribute('title', floatingFixTitle);
+      localStorage.setItem('floatState', 'fixed');
+    }
+  });
+
+    
+
+    let floatState = localStorage.getItem('floatState');
+    if (!floatState) {
+      floatState = 'static';
+      floatingButton.textContent = floatingFix;
+      floatingButton.setAttribute('title', floatingFixTitle);
+    }
+    if (floatState === 'fixed') {
+      fontButtonContainer.style.position = 'fixed';
+      floatingButton.textContent = floatingFix;
+      floatingButton.setAttribute('title', floatingFixTitle);
+    } else {
+      fontButtonContainer.style.position = 'static';
+      floatingButton.textContent = floatingFloat;
+      floatingButton.setAttribute('title', floatingFloatTitle);
+    }
+    
+    localStorage.setItem('floatState', floatState);
+    
+  fontButtonContainer.appendChild(floatingButton);
+
+
+    const infoLink = document.createElement('a');
+    infoLink.textContent = infoText;
+    infoLink.href = infoTextLink;
+    infoLink.target = '_blank';
+    infoLink.style.marginLeft = '8px';
+    infoLink.style.fontSize = '12px';
+    fontButtonContainer.appendChild(infoLink);
+
+    
+    infoLink.classList.add('z-index');
+
+    document.body.insertBefore(fontButtonContainer, document.body.firstChild);
+   
+  });
+  
+  
+
+</script></head>
+<body class="exe-web-site" id="exe-node-183"><script type="text/javascript">document.body.className+=" js"</script>
+<div id="content">
+<p id="skipNav"><a href="#main" class="sr-av">Saltar la navegación</a></p>
+<header id="header" ><div id="headerContent">Conservando nuestra historia</div></header>
+<nav id="siteNav">
+<ul>
+   <li><a href="index.html" class="daddy main-node">Conservando nuestra historia</a></li>
+   <li><a href="antes_de_empezar.html" class="no-ch">Antes de empezar</a></li>
+   <li><a href="1_construyendo_nuestro_propio_daymun.html" class="no-ch">1. Construyendo nuestro propio daymun</a></li>
+   <li><a href="2_activando_nuestros_conocimientos.html" class="no-ch">2. Activando nuestros conocimientos</a></li>
+   <li><a href="3_explorando_acerca_de_la_representacin_grfica.html" class="no-ch">3. Explorando acerca de la representación gráfica</a></li>
+   <li class="current-page-parent"><a href="4_estructurando_nuestro_conocimiento.html" class="current-page-parent daddy">4. Estructurando nuestro conocimiento</a>
+   <ul>
+      <li><a href="41_el_proceso_tecnolgico.html" class="no-ch">4.1. El proceso tecnológico</a></li>
+      <li id="active"><a href="42_las_escalas.html" class="active no-ch">4.2. Las escalas</a></li>
+      <li><a href="43_representacin_de_vistas.html" class="no-ch">4.3. Representación de vistas</a></li>
+      <li><a href="44_acotacin_y_tipos_de_lneas.html" class="no-ch">4.4. Acotación y tipos de líneas.</a></li>
+      <li><a href="45_boceto_croquis_y_plano.html" class="no-ch">4.5. Boceto, croquis y plano</a></li>
+      <li><a href="46_representacin_de_perspectivas.html" class="daddy">4.6. Representación de perspectivas</a>
+      <ul class="other-section">
+         <li><a href="461_perspectiva_caballera.html" class="no-ch">4.6.1. Perspectiva caballera</a></li>
+         <li><a href="462_perspectiva_isomtrica.html" class="no-ch">4.6.2. Perspectiva isométrica</a></li>
+      </ul>
+      </li>
+      <li><a href="47_representacin_cad_en_tinkercad.html" class="no-ch">4.7. Representación CAD en Tinkercad</a></li>
+   </ul>
+   </li>
+   <li><a href="5_aplicando_lo_aprendido.html" class="no-ch">5. Aplicando lo aprendido</a></li>
+   <li><a href="6_evaluando_lo_aprendido.html" class="no-ch">6. Evaluando lo aprendido</a></li>
+</ul>
+</nav>
+<div id='topPagination'>
+<nav class="pagination noprt">
+<a href="41_el_proceso_tecnolgico.html" class="prev"><span><span>&laquo; </span>Anterior</span></a> <span class="sep">| </span><span class="page-counter">Página <strong>8</strong> de <strong>17</strong></span> <span class="sep">| </span><a href="43_representacin_de_vistas.html" class="next"><span>Siguiente<span> &raquo;</span></span></a>
+</nav>
+</div>
+<div id="main-wrapper">
+<section id="main">
+<header id="nodeDecoration"><h1 id="nodeTitle">4.2. Las escalas</h1></header>
+<article class="iDevice_wrapper UDLcontentIdevice em_iDevice em_iDevice_udl_rep_lee" id="id1160">
+<div class="iDevice emphasis1" >
+<header class="iDevice_header" style="background-image:url(icon_udl_rep_lee.svg)"><h1 class="iDeviceTitle">1. Introducción</h1></header>
+<div class="iDevice_inner">
+<div class="iDevice_content_wrapper">
+<div id="ta1160_469_2" class="block iDevice_content">
+<div class="exe-udlContent exe-udlContent-representation"><section class="exe-udlContent-block"><div class="exe-udlContent-content"><div class="exe-udlContent-content-main"><p style="text-align: justify;"><span style="font-weight: 400;"><img src="gif_animado_narrador_juvenil.gif" alt="Rétor dice ..." style="float: left; margin-right: 10px; margin-left: 10px;" width="125" height="125">En tecnología, una escala se utiliza para representar objetos o diseños en un tamaño más pequeño o más grande que el original. Las escalas son herramientas importantes para los diseñadores y los ingenieros, ya que les permiten trabajar con modelos y planos que no necesariamente tienen que ser del mismo tamaño que el objeto real.<br></span></p></div><article class="exe-udlContent-content-simplified js-hidden"><header class='exe-udlContent-alt-content-title'><h2>Lectura facilitada</h2></header><p>En tecnología, la escala se usa para mostrar objetos o diseños en un tamaño diferente al original, ya sea más pequeño o más grande.</p>
+<p>Esto es útil para diseñadores e ingenieros, ya que les permite trabajar con modelos y planos que no necesariamente son del mismo tamaño que el objeto real.<br>&nbsp;</p><button class="exe-udlContent-alt-content-hide">Cerrar</button></article></div></section></div>
+</div>
+</div>
+</div>
+</div>
+</article>
+<article class="iDevice_wrapper UDLcontentIdevice em_iDevice em_iDevice_udl_exp_lee" id="id1161">
+<div class="iDevice emphasis1" >
+<header class="iDevice_header" style="background-image:url(icon_udl_exp_lee.svg)"><h1 class="iDeviceTitle">2. Descubriendo</h1></header>
+<div class="iDevice_inner">
+<div class="iDevice_content_wrapper">
+<div id="ta1161_470_2" class="block iDevice_content">
+<div class="exe-udlContent exe-udlContent-expression"><section class="exe-udlContent-block"><div class="exe-udlContent-content"><div class="exe-udlContent-content-main"><p>La escala es la relación que existe entre las dimensiones del dibujo y las dimensiones reales de dicho objeto.</p>
+<p><img src="escala.png" alt="" width="280" height="140" style="display: block; margin-left: auto; margin-right: auto;"></p>
+<p>A la hora de trabajar con escalas podemos encontrar tres tipos de escalas diferentes:</p>
+<p><span style="text-decoration: underline;"><strong>1.&nbsp;Escala de reducción:</strong></span><strong></strong></p>
+<p>La escala de reducción se utiliza cuando deseamos representar un objeto o un diseño en un tamaño más pequeño que su tamaño real.</p>
+<p><strong>Ejemplo</strong>: Si estamos diseñando un plano de una habitación y usamos una escala de 1:50, esto significa que cada centímetro en el plano representa 50 centímetros en la realidad. En otras palabras, estamos reduciendo el tamaño real del espacio en 50 veces para que quepa en nuestro dibujo.</p>
+<p><strong>Uso común</strong>: La escala de reducción se emplea para representar edificios, planos arquitectónicos, maquetas, mapas, entre otros</p>
+<p><span style="text-decoration: underline;"><strong>2. Escala de ampliación:</strong></span></p>
+<p>La escala de ampliación se utiliza cuando deseamos representar un objeto o un diseño en un tamaño más grande que su tamaño real.<br><strong></strong></p>
+<p><strong>Ejemplo</strong>: Supongamos que estamos diseñando un circuito eléctrico y utilizamos una escala de 2:1. Esto significa que cada centímetro en nuestro dibujo representa 2 centímetros en el circuito real. Estamos ampliando el tamaño del circuito en el dibujo para ver los detalles con más claridad.<br><strong></strong></p>
+<p><strong>Uso común</strong>: La escala de ampliación es útil para representar componentes electrónicos, detalles minuciosos en diseños mecánicos, circuitos impresos, etc.</p>
+<p><span style="text-decoration: underline;"><strong>3. Escala natural (1:1):</strong></span></p>
+<p>La escala natural, también conocida como escala 1:1, se utiliza cuando el objeto o diseño se representa a su tamaño real.</p>
+<p><strong>Ejemplo</strong>: En algunos casos, es esencial representar objetos o detalles exactamente como son en la realidad. Por ejemplo, al diseñar una llave inglesa o una pieza de repuesto que debe encajar perfectamente con el objeto real, se utiliza una escala natural (1:1) para que no haya ninguna distorsión de tamaño.</p>
+<p><strong>Uso común</strong>: La escala natural se emplea en situaciones en las que la precisión en las dimensiones es crítica, como en la fabricación de piezas y componentes.</p>
+<p><img src="tipos_de_escalas.jpg" alt="" width="623" height="304" style="display: block; margin-left: auto; margin-right: auto;"></p></div><article class="exe-udlContent-content-simplified js-hidden"><header class='exe-udlContent-alt-content-title'><h2>Lectura facilitada</h2></header><p>A la hora de trabajar con escalas podemos encontrar tres tipos de escalas diferentes:</p>
+<p><strong>1.&nbsp;Escala de reducción:</strong></p>
+<p>La escala de reducción se utiliza cuando deseamos representar un objeto o un diseño en un tamaño más pequeño que su tamaño real.</p>
+<p>Ejemplo: Si estamos diseñando un plano de una habitación y usamos una escala de 1:50, esto significa que cada centímetro en el plano representa 50 centímetros en la realidad. En otras palabras, estamos reduciendo el tamaño real del espacio en 50 veces para que quepa en nuestro dibujo.</p>
+<p>Uso común: La escala de reducción se emplea para representar edificios, planos arquitectónicos, maquetas, mapas, entre otros</p>
+<p><strong>2. Escala de ampliación:</strong></p>
+<p>La escala de ampliación se utiliza cuando deseamos representar un objeto o un diseño en un tamaño más grande que su tamaño real.</p>
+<p>Ejemplo: Supongamos que estamos diseñando un circuito eléctrico y utilizamos una escala de 2:1.</p>
+<p>Esto significa que cada centímetro en nuestro dibujo representa 2 centímetros en el circuito real.</p>
+<p>Estamos ampliando el tamaño del circuito en el dibujo para ver los detalles con más claridad.</p>
+<p>Uso común: La escala de ampliación es útil para representar componentes electrónicos, detalles minuciosos en diseños mecánicos, circuitos impresos, etc.</p>
+<p><strong>3. Escala natural (1:1):</strong></p>
+<p>La escala natural, también conocida como escala 1:1, se utiliza cuando el objeto o diseño se representa a su tamaño real.</p>
+<p>Ejemplo: En algunos casos, es esencial representar objetos o detalles exactamente como son en la realidad. Por ejemplo, al diseñar una llave inglesa o una pieza de repuesto que debe encajar perfectamente con el objeto real, se utiliza una escala natural (1:1) para que no haya ninguna distorsión de tamaño.</p>
+<p>Uso común: La escala natural se emplea en situaciones en las que la precisión en las dimensiones es crítica, como en la fabricación de piezas y componentes.</p><button class="exe-udlContent-alt-content-hide">Cerrar</button></article></div></section></div>
+</div>
+</div>
+</div>
+</div>
+</article>
+<article class="iDevice_wrapper UDLcontentIdevice em_iDevice em_iDevice_udl_rep_apoyovisual" id="id1162">
+<div class="iDevice emphasis1" >
+<header class="iDevice_header" style="background-image:url(icon_udl_rep_apoyovisual.svg)"><h1 class="iDeviceTitle">3. En vídeo</h1></header>
+<div class="iDevice_inner">
+<div class="iDevice_content_wrapper">
+<div id="ta1162_813_2" class="block iDevice_content">
+<div class="exe-udlContent exe-udlContent-representation"><section class="exe-udlContent-block"><div class="exe-udlContent-content"><div class="exe-udlContent-content-main"><div class="exe-fx exe-carousel">
+<h2></h2>
+<p style="text-align: center;"><iframe width="560" height="314" src="https://www.youtube.com/embed/mktsVzIQV-s"></iframe></p>
+<h2></h2>
+<p style="text-align: center;"><iframe width="560" height="314" src="https://www.youtube.com/embed/Bw4qC3vsN5U"></iframe></p>
+</div></div></div></section></div>
+</div>
+</div>
+</div>
+</div>
+</article>
+<article class="iDevice_wrapper UDLcontentIdevice em_iDevice em_iDevice_udl_rep_caso" id="id1163">
+<div class="iDevice emphasis1" >
+<header class="iDevice_header" style="background-image:url(icon_udl_rep_caso.svg)"><h1 class="iDeviceTitle">4. ¡Vamos con un ejemplo!</h1></header>
+<div class="iDevice_inner">
+<div class="iDevice_content_wrapper">
+<div id="ta1163_110_2" class="block iDevice_content">
+<div class="exe-udlContent exe-udlContent-representation"><section class="exe-udlContent-block"><div class="exe-udlContent-content"><div class="exe-udlContent-content-main"><p>Por ejemplo, si queremos dibujar un armario que mide 2 metros de alto en un papel, evidentemente nos vemos obligados a reducir sus dimensiones.</p>
+<p>Le aplicaremos, por ejemplo, una escala de reducción</p>
+<p><img src="e2.png" alt="" width="82" height="58" style="display: block; margin-left: auto; margin-right: auto;"><br><br>(Esto también puede expresarse así: 1:10 o 1/10.)Lo que hace la escala que aplicamos es dividir entre 10 la medida real del armario. Por tanto, la altura del armario de 2 m = 200 cm, dividida entre 10, será de 20 cm, que es un tamaño más razonable para dibujar en un papel.</p>
+<p>Esto también lo podemos hacer despejando la fórmula. En este caso conocemos la escala y la medida del armario en la realidad, así que sólo tenemos que despejar la medida del dibujo:</p>
+<p><img src="e3.png" alt="" width="452" height="70"><br><br>También se nos puede plantear un problema como el siguiente: si el armario mide 2 m de alto y está dibujado en un papel con una longitud de 20 cm, ¿qué escala hemos aplicado?</p>
+<p>En este caso sólo tendremos que aplicar la fórmula:</p>
+<p><img src="e4.png" alt="" width="292" height="62"></p></div></div></section></div>
+</div>
+</div>
+</div>
+</div>
+</article>
+<article class="iDevice_wrapper UDLcontentIdevice em_iDevice em_iDevice_udl_exp_coproducciontxt" id="id680">
+<div class="iDevice emphasis1" >
+<header class="iDevice_header" style="background-image:url(icon_udl_exp_coproducciontxt.svg)"><h1 class="iDeviceTitle">Actividad</h1></header>
+<div class="iDevice_inner">
+<div class="iDevice_content_wrapper">
+<div id="ta680_1380_2" class="block iDevice_content">
+<div class="exe-udlContent exe-udlContent-expression"><section class="exe-udlContent-block"><div class="exe-udlContent-content"><div class="exe-udlContent-content-main"><p>Llega el momento de poner en práctica lo aprendido. Formad grupos de cuatro, de manera que unos grupos trabajarán la escala de reducción mientras que otros la escala de ampliación.</p>
+<p>Una vez hayáis aprendido a manejaros con las escalas volved a vuestro grupo de origen para:</p>
+<ul>
+<li>Explicar cómo funciona vuestra escala realizando con ellos los ejercicios que habéis hecho anteriormente.</li>
+<li>Aprender el funcionamiento de la otra escala realizando los ejercicios propuestos.</li>
+</ul></div><article class="exe-udlContent-content-simplified js-hidden"><header class='exe-udlContent-alt-content-title'><h2>Lectura facilitada</h2></header><p>Ahora vamos a aplicar lo que hemos aprendido. Formaremos grupos de cuatro personas, algunos trabajarán en la escala de reducción y otros en la escala de ampliación.</p>
+<p>Luego, regresaremos a nuestros grupos originales y:</p>
+<p>Explicaremos cómo funciona nuestra escala y realizaremos ejercicios juntos, como los que ya hemos practicado.<br>Aprenderemos cómo funciona la otra escala haciendo los ejercicios propuestos.</p><button class="exe-udlContent-alt-content-hide">Cerrar</button></article></div></section></div>
+</div>
+</div>
+</div>
+</div>
+</article>
+<article class="iDevice_wrapper UDLcontentIdevice em_iDevice em_iDevice_udl_exp_tarea" id="id1165">
+<div class="iDevice emphasis1" >
+<header class="iDevice_header" style="background-image:url(icon_udl_exp_tarea.svg)"><h1 class="iDeviceTitle">Ejercicios escala ampliación</h1></header>
+<div class="iDevice_inner">
+<div class="iDevice_content_wrapper">
+<div id="ta1165_816_2" class="block iDevice_content">
+<div class="exe-udlContent exe-udlContent-representation"><section class="exe-udlContent-block"><div class="exe-udlContent-content"><div class="exe-udlContent-content-main"><div class="exe-fx exe-tabs">
+<h2>Ejercicio 1</h2>
+<p>Un dibujo a escala representa un modelo de automóvil a una escala de 1:20. Si la longitud real del automóvil es de 3 metros, ¿cuál es la longitud del automóvil en el dibujo?</p>
+<h2>Ejercicio 2</h2>
+<p>Una maqueta de una casa se ha realizado a una escala de 1:50. Si la altura real de la casa es de 5 metros, ¿cuál es la altura de la maqueta en centímetros?<br><br></p>
+<h2>Ejercicio 3</h2>
+<p>En un plano de un circuito eléctrico, se utiliza una escala de 1:2. Si la distancia real entre dos componentes es de 8 centímetros, ¿cuál es la distancia entre esos mismos componentes en el plano?</p>
+<h2>Ejercicio 4</h2>
+<p>Se ha diseñado un jardín a una escala de 1:100. Si la anchura real de un camino es de 2.5 metros, ¿cuál es la anchura del camino en el dibujo?</p>
+</div></div></div></section><section class="exe-udlContent-block js-hidden"><header class="exe-udlContent-header exe-udlContent-character-3"><h2>Profundiza</h2></header><div class="exe-udlContent-content"><div class="exe-udlContent-content-main"><div class="exe-fx exe-tabs">
+<h2>Ejercicio 5</h2>
+<p>Una maqueta de un avión se ha realizado a una escala de 1:200. Si la envergadura real del avión es de 40 metros, ¿cuál es la envergadura de la maqueta en centímetros?</p>
+<h2>Ejercicio 6</h2>
+<p>Una maqueta de un avión se ha realizado a una escala de 1:200. Si la envergadura real del avión es de 40 metros, ¿cuál es la envergadura de la maqueta en centímetros?</p>
+<h2>Ejercicio 7</h2>
+<p>Una prenda de ropa se ha diseñado a una escala de 1:12. Si la longitud real de la manga es de 72 centímetros, ¿cuál es la longitud de la manga en el diseño?</p>
+<h2>Ejercicio 8</h2>
+<p>Una prenda de ropa se ha diseñado a una escala de 1:12. Si la longitud real de la manga es de 72 centímetros, ¿cuál es la longitud de la manga en el diseño?</p>
+</div></div></div></section></div>
+</div>
+</div>
+</div>
+</div>
+</article>
+<article class="iDevice_wrapper UDLcontentIdevice em_iDevice em_iDevice_udl_exp_tarea" id="id1222">
+<div class="iDevice emphasis1" >
+<header class="iDevice_header" style="background-image:url(icon_udl_exp_tarea.svg)"><h1 class="iDeviceTitle">Ejercicios escala reducción</h1></header>
+<div class="iDevice_inner">
+<div class="iDevice_content_wrapper">
+<div id="ta1222_783_2" class="block iDevice_content">
+<div class="exe-udlContent exe-udlContent-representation"><section class="exe-udlContent-block"><div class="exe-udlContent-content"><div class="exe-udlContent-content-main"><div class="exe-fx exe-tabs">
+<h2>Ejercicio 1</h2>
+<p>Un plano de una casa se ha realizado a una escala de reducción de 1:50. Si la longitud en el plano es de 4 centímetros, ¿cuál es la longitud real de la casa?</p>
+<h2>Ejercicio 2</h2>
+<p>Se ha dibujado un mapa de una ciudad a una escala de 1:10,000. Si la distancia entre dos puntos en el mapa es de 5 centímetros, ¿cuál es la distancia real entre esos dos puntos en la ciudad?<br><br></p>
+<h2>Ejercicio 3</h2>
+<p>Un circuito eléctrico se representa en un plano a una escala de 1:5. Si la distancia entre dos componentes en el plano es de 2 centímetros, ¿cuál es la distancia real entre esos componentes?</p>
+<h2>Ejercicio 4</h2>
+<p>Una maqueta de un avión se ha realizado a una escala de reducción de 1:20. Si la envergadura en la maqueta es de 15 centímetros, ¿cuál es la envergadura real del avión?</p>
+</div></div></div></section><section class="exe-udlContent-block js-hidden"><header class="exe-udlContent-header exe-udlContent-character-3"><h2>Profundiza</h2></header><div class="exe-udlContent-content"><div class="exe-udlContent-content-main"><div class="exe-fx exe-tabs">
+<h2>Ejercicio 5</h2>
+<p>Un mapa topográfico de una montaña se ha hecho a una escala de 1:25,000. Si la altura de la montaña en el mapa es de 8 centímetros, ¿cuál es la altura real de la montaña?</p>
+<h2>Ejercicio 6</h2>
+<p>Un diseño de una prenda de ropa se ha realizado a una escala de 1:4. Si la longitud de la falda en el diseño es de 5 centímetros, ¿cuál es la longitud real de la falda?</p>
+<h2>Ejercicio 7</h2>
+<p>Un plano de una planta de una fábrica se ha dibujado a una escala de 1:100. Si la distancia entre dos áreas en el plano es de 3 centímetros, ¿cuál es la distancia real entre esas áreas en la fábrica?</p>
+<h2>Ejercicio 8</h2>
+<p>Un dibujo de un edificio a escala de reducción muestra una altura de 6 centímetros. Si la escala es 1:500, ¿cuál es la altura real del edificio?</p>
+</div></div></div></section></div>
+</div>
+</div>
+</div>
+</div>
+</article>
+<article class="iDevice_wrapper UDLcontentIdevice" id="id1168">
+<div class="iDevice emphasis0" >
+<div id="ta1168_814_2" class="block iDevice_content">
+<div class="exe-udlContent exe-udlContent-engagement"><section class="exe-udlContent-block js-hidden"><header class="exe-udlContent-header exe-udlContent-character-1"><h2><span class="sr-av">Motus dice </span>¿Qué es lo que más te ha gustado de la interacción con tus compañeros?</h2></header><div class="exe-udlContent-content"><div class="exe-udlContent-content-main"><p style="text-align: justify;"><span style="font-size: 12pt;">¿Te ha llamado la atención alguna pregunta planteada por alguno de ellos? ¿Se lo has dicho? ¡A todos y todas nos gusta saber lo que hacemos bien!</span></p></div></div></section></div>
+</div>
+</div>
+</article>
+<article class="iDevice_wrapper textIdevice em_iDevice em_iDevice_udl_eng_curiosidad" id="id1169">
+<div class="iDevice emphasis1" >
+<header class="iDevice_header" style="background-image:url(icon_udl_eng_curiosidad.svg)"><h1 class="iDeviceTitle">Refuerzo y profundización</h1></header>
+<div class="iDevice_inner">
+<div class="iDevice_content_wrapper">
+<div id="ta1169_813_2" class="block iDevice_content">
+<div class="exe-text"><p>Descubre más en:</p></div>
+</div>
+</div>
+</div>
+</div>
+</article>
+<div id="packageLicense" class="cc cc-by-nc-sa">
+<p><span>Obra publicada con</span> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Licencia Creative Commons Reconocimiento No comercial Compartir igual 4.0</a></p>
+</div>
+</section>
+</div>
+<div id='bottomPagination'>
+<nav class="pagination noprt">
+<a href="41_el_proceso_tecnolgico.html" class="prev"><span><span>&laquo; </span>Anterior</span></a> <span class="sep">| </span><span class="page-counter">Página <strong>8</strong> de <strong>17</strong></span> <span class="sep">| </span><a href="43_representacin_de_vistas.html" class="next"><span>Siguiente<span> &raquo;</span></span></a>
+</nav>
+</div>
+</div>
+<p id="made-with-eXe"><a href="https://exelearning.net/" target="_blank" rel="noopener"><span>Creado con eXeLearning<span> (Ventana nueva)</span></span></a></p><script type="text/javascript" src="_adultos_js.js"></script></body></html>
